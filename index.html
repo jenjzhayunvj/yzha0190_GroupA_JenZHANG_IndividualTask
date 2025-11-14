@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P5 Audio Sketch</title>
+
+  <!-- p5 相关 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    #canvas-container { width: 100%; height: 100%; }
+    #play-pause {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <button id="play-pause">🎵</button>
+  <div id="canvas-container"></div>
+
+  <script src="sketch.js"></script>
+</body>
+</html>
