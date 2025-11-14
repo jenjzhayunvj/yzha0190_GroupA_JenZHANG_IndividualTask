@@ -1,30 +1,30 @@
-// =============== 全局变量 ===============
 let max_height, max_width;
 
-// 音频相关
+// for audio
 let song;
 let amp;
 let fft;
-let currentLevel = 0; // 振幅（整体音量）
-let lowEnergy = 0;    // 低频能量（bass）
-let highEnergy = 0;   // 高频能量（treble）
+let currentLevel = 0; // overall loudness-ish
+let lowEnergy = 0;    // low freq (bass boom)
+let highEnergy = 0;   // high freq (treble)
 
-// 背景三角的颜色（会随高低频变化）
+
+// background triangles color (will react to sound)
 let triangleColor;
 
-// 柄体 S 形扭动参数
-let stemWavePhase = 0;       // 波相位（动画）
-let stemWaveSpeed = 0.12;    // 速度
-let stemWaveStrength = 0;    // 扭动强度（随 bass）
+// stem S-shape wobble vars
+let stemWavePhase = 0;       // phase for animation
+let stemWaveSpeed = 0.12;    // how fast it wiggles
+let stemWaveStrength = 0;    // how strong the wobble (linked to bass)
 
 
-// =============== 预加载音频 ===============
+//load audio first
 function preload() {
-  song = loadSound('assets/jenZ.mp3');
+  song = loadSound('assets/jenZ.mp3'); // remember to put file there or it dies
 }
 
 
-// =============== 初始化 ===============
+// setup canvas
 function setup() {
   max_height = windowHeight;
   max_width = windowWidth;
@@ -33,19 +33,19 @@ function setup() {
   stroke("#BC7653");
   strokeWeight(1);
 
-  // ===== 点击按钮控制音频 =====
+  // play / pause button in HTML
   const btn = document.getElementById("play-pause");
   btn.addEventListener("click", () => {
     userStartAudio();
     if (song.isPlaying()) song.pause();
-    else song.loop();
+    else song.loop(); // I just loop it forever lol
   });
 
-  // 音量
+  // overall volume detector
   amp = new p5.Amplitude();
   amp.setInput(song);
 
-  // 频谱
+  // frequency analyzer so we can get bass/treble
   fft = new p5.FFT(0.8, 1024);
   fft.setInput(song);
 
@@ -53,31 +53,31 @@ function setup() {
 }
 
 
-// =============== 主绘制循环 ===============
+//  main draw loop
 function draw() {
-  randomSeed(1); // 稳定背景结构
+  randomSeed(1); // keep bg pattern from going totally crazy every frame
 
-  // ---- 音频分析 ----
+  // ---- audio values ----
   currentLevel = amp ? amp.getLevel() : 0;
 
   fft.analyze();
-  lowEnergy = fft.getEnergy("bass");       // 低频
-  highEnergy = fft.getEnergy("treble");    // 高频
+  lowEnergy = fft.getEnergy("bass");       // bass part
+  highEnergy = fft.getEnergy("treble");    // high part
 
   let bassNorm = map(lowEnergy, 0, 255, 0, 1);
   let trebleNorm = map(highEnergy, 0, 255, 0, 1);
 
-  // ---- 背景颜色随频率变化 ----
+  // bg color = warm <-> cool depends on sound
   const warmCol = color("#BC7653");
   const coolCol = color("#4B6CD8");
   let tCol = constrain(map(highEnergy - lowEnergy, -80, 80, 0, 1), 0, 1);
   triangleColor = lerpColor(warmCol, coolCol, tCol);
 
-  // ---- 背景亮度随 bass 微变 ----
+  // tiny brightness change with bass (so it “breathes”)
   let bgBase = map(bassNorm, 0, 1, 7, 20);
   background(bgBase);
 
-  // ---- 背景整体震动（低频驱动）----
+  // whole background shaking with bass
   let shakeAmount = map(bassNorm, 0, 1, 0, 30);
   let shakeX = sin(frameCount * 0.08) * shakeAmount;
   let shakeY = cos(frameCount * 0.11) * shakeAmount * 0.5;
@@ -88,38 +88,37 @@ function draw() {
   drawBackgroundTriangles();
   pop();
 
-  // ================== 绘制蘑菇 ==================
+  // draw the mushroom 
   push();
 
   const s = min(width, height) / 1200;
   translate(width / 2, height * 0.9);
   scale(s);
 
-  // === 整体呼吸效果（bass 驱动） ===
+  //  mushroom moving accroding bass 
   let breathScale = map(bassNorm, 0, 1, 0.96, 1.12);
   scale(breathScale);
 
-  // === 柄体 S 形扭动（bass 驱动） ===
+  // stem S-shape wobble, also bass-driven 
   stemWavePhase += stemWaveSpeed;
   stemWaveStrength = lerp(stemWaveStrength, bassNorm * 35, 0.15);
-  // 说明：
-  // 数字 35 = "B 强度选择 B（明显摇摆）" 的数值
-
-  drawStemUniform();  // ← 柄体 + 红点由内部使用扭动函数
-  drawCapReplica(0, -650, 880, 360);
+  
+  drawStemUniform();  // stem + red dots inside, all warped
+  drawCapReplica(0, -650, 880, 360); // big hat
 
   pop();
 }
 
 
 
-// =============== 背景三角形 =================
+//  background triangles
 function drawBackgroundTriangles() {
   const density = 40;
   const gap = max(max_width, max_height) / density;
   const lines = [];
   let odd = false;
 
+  // make a noisy grid of points
   for (let y = 0; y <= max_height + gap; y += gap) {
     odd = !odd;
     const row = [];
@@ -134,6 +133,7 @@ function drawBackgroundTriangles() {
     lines.push(row);
   }
 
+  // connect them into triangles (zigzag style)
   odd = true;
   for (let y = 0; y < lines.length - 1; y++) {
     odd = !odd;
@@ -149,7 +149,7 @@ function drawBackgroundTriangles() {
 }
 
 
-// =============== 三角形绘制（颜色已被音频驱动） ===============
+//  single triangle (wobbly edges) 
 function drawTriangle(a, b, c) {
   fill(triangleColor);
   stroke(triangleColor);
@@ -177,15 +177,16 @@ function drawTriangle(a, b, c) {
   vertex(c.x, c.y);
   endShape(CLOSE);
 }
-// =============== S 型扭动函数（核心） ===============
-// 让柄体的 x 值左右摆动
-function stemWarpX(y, originalX) {
-  // y 从 -H（顶部）到 0（底部）
-  let norm = map(y, -680, 0, 0, 1);  
-  // norm 越靠近 1 → 越接近底部 → Deform 越弱
-  // norm 越靠近 0 → 越接近上部 → Deform 越强（像软体）
 
-  let wave = sin(stemWavePhase + norm * 6.0); // 波段数量
+
+//  mushroom S-shape warp
+// change stem x position so it swings
+function stemWarpX(y, originalX) {
+  // y: from -H (top) to 0 (bottom)
+  // closer to top = softer jelly; bottom = more stable
+  let norm = map(y, -680, 0, 0, 1);  
+
+  let wave = sin(stemWavePhase + norm * 6.0); // how many waves along stem
   let sway = wave * stemWaveStrength * pow(norm, 0.25);
 
   return originalX + sway;
@@ -193,42 +194,42 @@ function stemWarpX(y, originalX) {
 
 
 
-/* ====================== 伞柄（红点 + S 型扭动 + 正确剪裁） ====================== */
+// stem (red dots + wobble + clipping)
 function drawStemUniform() {
   const H = 680;
   const topW = 120;
   const botW = 230;
 
-  // -------- 1. 白色柄体：用采样点 + 扭动来画轮廓 --------
+  // 1. draw white stem shape using sample points
   noStroke();
   fill("#FFF7F4");
 
   beginShape();
-  // 上半边：从顶部(-H)一路走到底(0)，画左边轮廓
+  // go from top(-H) to bottom(0) to draw left side
   for (let ty = 0; ty <= 1.001; ty += 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
     let left = -half;
-    left = stemWarpX(y, left);   // 左边经过 S 型扭动
+    left = stemWarpX(y, left);   // left edge also wobbles
     vertex(left, y);
   }
-  // 下半边：从底部回到顶部，画右边轮廓
+  // then go back from bottom to top for right side
   for (let ty = 1; ty >= -0.001; ty -= 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
     let right = half;
-    right = stemWarpX(y, right); // 右边也扭动
+    right = stemWarpX(y, right); // same wobble for right edge
     vertex(right, y);
   }
   endShape(CLOSE);
 
-  // -------- 2. 用同一套轮廓做剪裁路径（保证红点不会跑出去） --------
+  //  use same outline as a clipping mask (so red dots stay inside)
   const ctx = drawingContext;
   ctx.save();
   ctx.beginPath();
 
   let first = true;
-  // 左边轮廓
+  // left outline
   for (let ty = 0; ty <= 1.001; ty += 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
@@ -241,7 +242,7 @@ function drawStemUniform() {
       ctx.lineTo(left, y);
     }
   }
-  // 右边轮廓
+  // right outline
   for (let ty = 1; ty >= -0.001; ty -= 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
@@ -253,7 +254,7 @@ function drawStemUniform() {
   ctx.closePath();
   ctx.clip();
 
-  // -------- 3. 在剪裁范围内画红色圆点（依旧跟音量联动） --------
+  //  draw red dots inside the stem (size + alpha linked to volume)
   const levelFactor = map(currentLevel, 0, 0.35, 0.8, 1.8);
   const alphaBoost  = map(currentLevel, 0, 0.35, 140, 255);
 
@@ -264,16 +265,16 @@ function drawStemUniform() {
   const sideCols = 8;
   const stepX = 22;
 
-  let colXs = [0];
+  let colXs = [0]; // center column
   for (let i = 1; i <= sideCols; i++) {
-    colXs.push(i * stepX, -i * stepX);
+    colXs.push(i * stepX, -i * stepX); // left/right
   }
 
   for (let c of colXs) {
     let isCenter = (c === 0);
     for (let j = 0; j < rows; j++) {
-      let y = map(j, 0, rows - 1, -H, 0); // 从顶部到柄底
-      let x = stemWarpX(y, c);            // 列的 x 同样扭动
+      let y = map(j, 0, rows - 1, -H, 0); // from top to bottom
+      let x = stemWarpX(y, c);            // column also wobbles
 
       let d = (isCenter ? 12 : 7) * levelFactor;
       circle(x, y, d);
@@ -286,7 +287,7 @@ function drawStemUniform() {
 
 
 
-// ================== 伞盖（完整不变） ==================
+//cap (the mushroom hat) 
 function drawCapReplica(cx, cy, W, H) {
   const rimThk = 54;
   const topW = W * 1.05, topH = H * 0.95;
@@ -309,12 +310,14 @@ function drawCapReplica(cx, cy, W, H) {
   const bendAmp  = 18;
   const bendTilt = 0;
 
+  // slight bending on Y so it’s not too flat
   function yBend(a) {
     const u = (a - aStart) / (aEnd - aStart);
     const t = u * 2 - 1;
     return -bendAmp * (1 - t * t) + bendTilt * t;
   }
 
+  // wavy red rim
   function rimWave(a) {
     const u = (a - aStart) / (aEnd - aStart);
     const t = u * 2 - 1;
@@ -367,7 +370,7 @@ function drawCapReplica(cx, cy, W, H) {
   }
 
 
-  // 黄色主体
+  // yellow main body of cap
   noStroke();
   fill("#F3D225");
   beginShape();
@@ -375,7 +378,7 @@ function drawCapReplica(cx, cy, W, H) {
   for (const p of lower) vertex(p.x, p.y);
   endShape(CLOSE);
 
-  // 用黄色轮廓裁剪纹理
+  // use yellow outline as clip for inner details
   const ctx = drawingContext;
   ctx.save();
   ctx.beginPath();
@@ -385,7 +388,7 @@ function drawCapReplica(cx, cy, W, H) {
   ctx.closePath();
   ctx.clip();
 
-  // 黄色缝线放射线
+  // draw yellow seams lines
   stroke("#E7BA0E");
   strokeWeight(3);
   for (let i = 0; i < 17; i++) {
@@ -399,7 +402,7 @@ function drawCapReplica(cx, cy, W, H) {
     }
   }
 
-  // 紫点弧圈
+  // purple dot rings
   noStroke();
   fill("#7C3A6B");
 
@@ -422,7 +425,7 @@ function drawCapReplica(cx, cy, W, H) {
     }
   }
 
-  // 下缘补点
+  // tiny dots along bottom edge
   noStroke();
   fill("#7C3A6B");
   for (let i = 0; i < lower.length; i += 8) {
@@ -430,7 +433,7 @@ function drawCapReplica(cx, cy, W, H) {
     circle(p.x, p.y - 3, 1);
   }
 
-  // 顶沿补点
+  // dots along top inner part
   let rr = H * 0.16, dots = 14;
   for (let k = 0; k < dots; k++) {
     let a = lerp(aStart + 0.02, aEnd - 0.02, k / dots);
@@ -440,7 +443,7 @@ function drawCapReplica(cx, cy, W, H) {
   }
   ctx.restore();
 
-  // 红顶边
+  // red rim on the top
   noStroke();
   fill("#D81E25");
   beginShape();
@@ -458,7 +461,7 @@ function drawCapReplica(cx, cy, W, H) {
   }
   endShape(CLOSE);
 
-  // 白豆点
+  // white beans on the cap
   ctx.save();
   ctx.beginPath();
   for (let a = aStart; a <= aEnd; a += step) {
@@ -495,7 +498,7 @@ function drawCapReplica(cx, cy, W, H) {
 
 
 
-// =============== 自适应画布 ===============
+//fix window resize
 function windowResized() {
   max_height = windowHeight;
   max_width = windowWidth;
