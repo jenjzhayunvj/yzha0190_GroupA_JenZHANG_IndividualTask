@@ -11,7 +11,7 @@ All animated behaviours are driven by different components of the audio signal (
 # 2.How to interact with the work
 
 Click the “🎵” button to start the audio track.
-
+![An image of button](/Users/jenjzhayunv/Desktop/9103/yzha0190_GroupA_JenZHANG_IndividualTask/assets/button.png)
 Once the audio begins, the entire composition becomes reactive:
 - The mushroom scales up and down according to amplitude.
 - The stem deforms in an S-shaped motion based on bass energy.
