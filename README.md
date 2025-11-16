@@ -41,7 +41,7 @@ Yayoi Kusama's mushrooms are characterized by their soft, slightly exaggerated s
 
 At the same time, I wanted the mushrooms to be lively and rhythmic, like a musical performance group, similar to some fun mushroom animations online. 
 
-[Eat Your Vegetables Rap Song Vocal Music](https://www.youtube.com/watch?v=ep5-w-UFIHI). This was one od the reference video that i want to achieve.
+[Eat Your Vegetables Rap Song Vocal Music](https://www.youtube.com/watch?v=ep5-w-UFIHI). This was one of the reference videos I wanted to achieve.
 
 ### 2.3.2 The audio track 
 I used the song Pueblo Mágico by Quincas Moreira for my audio input.
@@ -70,8 +70,6 @@ Javascript-Voronoi by Raymond Hill — https://github.com/gorhill/Javascript-Vor
 p5.voronoi by Francisco Moreira — https://github.com/Dozed12/p5.voronoi
 
 ## 2.4.3 Support and AI-assisted Learning
-Support and AI-assisted learning
-
 I also used ChatGPT as a learning and debugging tool during development. It helped me understand how to apply amplitude and FFT values from the p5.sound library to visual animation. I did not copy large portions of code directly. Instead, I asked questions, reviewed the suggestions, and then integrated and modified the logic myself to fit our group structure.
 
 This support mainly helped me with:
@@ -81,3 +79,6 @@ This support mainly helped me with:
 - Fixing small errors when combining sound analysis with our existing update functions
 
 By using AI in this way, I was able to learn faster and maintain full understanding and control over the final code.
+
+# 3. Conclusion
+This task helped me explore audio-reactive animation and also taught me how to collaborate through GitHub for the first time. I learned how to use amplitude and FFT data to make the mushrooms react to music, and how to add new behaviour on top of our group’s code without breaking anything. It feels great to see the artwork come alive with sound, and I now understand the audio part much better than before.
