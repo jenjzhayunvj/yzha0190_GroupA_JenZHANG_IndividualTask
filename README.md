@@ -5,11 +5,11 @@
 
 # 1.Interaction Instructions
 
-Click the “🎵” button to start or pause the audio track.
+Click the music button to start or pause the audio track.
 
 ![An image of button](assets/button.png)
 
-Once the audio begins, the entire composition becomes reactive.
+Once the audio begins, the mushrooms becomes reactive.
 
 
 # 2.Individual Approach Detail
@@ -17,21 +17,18 @@ Once the audio begins, the entire composition becomes reactive.
 This repository contains my individual functional prototype based on our group’s artwork result.
 ![An image of result](assets/mushrooms.png)
 ## 2.2 Unique Animated Visual Properties
-In my individual version, the animation focuses on global audio responsiveness rather than user interaction. I animate three key properties of the visual composition:
+In my version, the mushrooms move based on the music instead of the user. I mainly animate three things:
 
-- Global Scale Variation (Amplitude-Driven Breathing Effect)
-Both the mushroom cap and stem scale together based on sound amplitude. This creates a smooth breathing motion, as if the mushrooms inhale and exhale with the rhythm of the music.
+- Mushrooms grow and shrink gently with the volume
+The whole mushroom scales up and down like breathing when the music gets loud or soft.
 
-- Stem Deformation (Bass-Driven S-Curve Wobble)
-The stem’s horizontal curvature is modulated by a sine-wave function whose strength corresponds to bass energy. Strong bass results in more dramatic wobbling, making the mushrooms visually “dance.”
+- Stems wiggle more when the drum beats hit
+Low sounds make the stems bend side to side, so it looks like the mushrooms are dancing to the beat.
 
-- Dynamic Background Brightness (Treble-Responsive Atmosphere)
-The triangular background brightness is mapped to treble energy. Higher frequencies increase overall lightness, enhancing immersion and giving the scene a more vibrant and reactive mood.
+- The background becomes brighter when the music gets sharper
+Higher sounds make the background glow a bit more, so the whole scene feels more alive.
 
-Compared to other group members, my animation approach is fully audio-driven. 
-One teammate designed path-based movement where background lines flow along curves and mushrooms bounce vertically while swaying side to side. Another teammate is focusing on interaction, allowing users to grab and move mushrooms freely around the canvas. 
-
-In contrast, my version requires no user input and reacts continuously to the sound through scale changes, stem wobbling, and background brightness shifts.
+Compared to other group members, my animation does not need any clicking or dragging. One teammate focuses on path-based movement with bouncing mushrooms, and another lets users move the mushrooms around freely. My version keeps everything moving on its own and reacts only to sound.
 
 
 ## 2.3 Design Inspiration
@@ -55,15 +52,12 @@ Amplitude controls the global scale of each mushroom, so they appear to expand a
 
 Bass energy extracted from the FFT drives the wobble of the stems, creating an S-shaped dancing movement that reacts to strong beats.
 
-Treble energy influences the brightness of the background, causing subtle glowing changes when higher frequencies become more prominent.
-
-This transforms the static group illustration into a performance-like scene that reacts continuously to music.
+Treble energy influences the brightness of the background, causing subtle glowing changes when higher frequencies become more prominent.This transforms the static group illustration into a performance-like scene that reacts continuously to music.
 
 The p5.sound audio analysis features (Amplitude and FFT) are part of the p5.js library, but using them for this level of visual animation required learning beyond the basic usage taught in class. I referred to the official documentation to understand how to extract bass and treble values for controlling different visual components.
 
-Our group code also uses a Voronoi pattern system which relies on two external libraries not covered in the course content. I did not modify or implement these algorithms myself; I simply continued using them as part of the existing design.
 ## 2.4.2 External Libraries Used
-Voronoi libraries used:
+Our group code also uses a Voronoi pattern system which relies on two external libraries not covered in the course content. I did not modify or implement these algorithms myself; I simply continued using them as part of the existing design.
 
 Javascript-Voronoi by Raymond Hill — https://github.com/gorhill/Javascript-Voronoi
 
