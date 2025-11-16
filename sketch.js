@@ -2583,12 +2583,12 @@ stemWaveStrength = lerp(stemWaveStrength, lvl * 35, 0.15);
 
   pop();
 
-  // --- 小蘑菇（class Mushroom 里面已经加好音频动效） ---
+  // class small Mushroom
   for (const m of mushrooms) {
     m.draw();
   }
 
-  pop(); // 结束场景缩放
+  pop(); 
 }
 
 

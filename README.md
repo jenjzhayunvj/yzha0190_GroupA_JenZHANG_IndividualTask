@@ -1,5 +1,18 @@
 # yzha0190_GroupA_JenZHANG_IndividualTask
- Group A Audio part Jen ZHANG (yzha0190)
+ Audio-Reactive Toadstools | Individual Functioning Prototype
+ Tut 2, Group A, Audio part, Jen ZHANG (yzha0190)
+
+
+# 1.Interaction Instructions
+
+Click the “🎵” button to start the audio track.
+![An image of button](assets/button.png)
+Once the audio begins, the entire composition becomes reactive:
+- The mushroom scales up and down according to amplitude.
+- The stem deforms in an S-shaped motion based on bass energy.
+- The red dots on the stem change size and opacity depending on amplitude.
+- The background triangle network changes colour according to treble energy.
+The prototype requires no mouse interaction; the animation responds purely to sound.
 
 # 1.Overview
 This repository contains my individual interactive prototype based on our group’s chosen artwork: Toadstools by Yayoi KUSAMA.
@@ -7,17 +20,6 @@ This repository contains my individual interactive prototype based on our group�
 My individual part focuses on transforming the static drawing into an audio-reactive, dynamically deforming system using p5.js and the p5.sound library. 
 
 All animated behaviours are driven by different components of the audio signal (amplitude, bass energy, treble energy).The result is a clear and responsive visual animation that reacts smoothly to the music.
-
-# 2.How to interact with the work
-
-Click the “🎵” button to start the audio track.
-![An image of button](/Users/jenjzhayunv/Desktop/9103/yzha0190_GroupA_JenZHANG_IndividualTask/assets/button.png)
-Once the audio begins, the entire composition becomes reactive:
-- The mushroom scales up and down according to amplitude.
-- The stem deforms in an S-shaped motion based on bass energy.
-- The red dots on the stem change size and opacity depending on amplitude.
-- The background triangle network changes colour according to treble energy.
-The prototype requires no mouse interaction; the animation responds purely to sound.
 
 # 3.Individual Animation Approach
 
