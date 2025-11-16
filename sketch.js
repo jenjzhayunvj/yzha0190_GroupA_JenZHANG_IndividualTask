@@ -1,25 +1,25 @@
-// ================== 全局变量 ==================
 let maxWidth, maxHeight;
-let bg;           // 背景用的 graphics buffer
+let bg;           // background graphics buffer
 let mushrooms = [];
-let playButton;  // 控制播放的 HTML 按钮
+let playButton;  // HTML button to control playback
 
-// ---- 音频相关 ----
-let song;             // 音乐
-let amp;              // 振幅分析器
-let currentLevel = 0; // 当前音量
-// stem S-shape wobble vars（伞柄 S 型扭动）
-let stemWavePhase = 0;       // 相位（动画用）
-let stemWaveSpeed = 0.12;    // 扭动速度
-let stemWaveStrength = 0;    // 扭动强度（跟音量关联）
+// ---- Audio related ----
+let song;             // music
+let amp;  // p5.Amplitude for audio-reactive scaling (added for individual task)
+let currentLevel = 0; // audio loudness mapped to animation (my contribution)
 
-// ================== 预加载音频 ==================
+// stem S-shape wobble vars (stem S-shaped wobble)
+let stemWavePhase = 0;       // phase (for animation)
+let stemWaveSpeed = 0.12;    // wobble speed
+let stemWaveStrength = 0;    // wobble strength (linked to audio level)
+
+// Preload audio 
 function preload() {
-  // 把路径改成你自己的音频文件
+  // Change the path to your own audio file
   song = loadSound('assets/jenZ.mp3');
 }
 
-// ================== 背景（来源：第一份代码） ==================
+// Background
 
 function buildBackground() {
   maxWidth = 1200;
@@ -65,7 +65,7 @@ function buildBackground() {
   }
 }
 
-// 画背景用的三角形
+// Triangle used to draw the background
 function drawTriangle(g, a, b, c) {
   g.fill("#BC7653");
   g.stroke("#BC7653");
@@ -109,7 +109,7 @@ function drawTriangle(g, a, b, c) {
   g.endShape(CLOSE);
 }
 
-// ================== Pattern / Cap / Stem / Base / Mushroom 系统 ==================
+// Pattern / Cap / Stem / Base / Mushroom system
 
 // Cap Pattern
 const CAP_PATTERN = {
@@ -146,7 +146,7 @@ function withClip(areaPathFn, painterFn) {
   ctx.restore();
 }
 
-// 计算多边形外接矩形
+// Compute polygon bounding box
 function boundingBox(poly) {
   let minx = Infinity,
     miny = Infinity,
@@ -1357,30 +1357,30 @@ class Mushroom {
     randomSeed(this.seed);
     noiseSeed(this.seed);
 
-    // ===== 音频驱动的小蘑菇动效 =====
-    // currentLevel 是我们之前给大蘑菇用的那个全局音量变量
+  // Audio-driven small mushroom motion
+  // currentLevel is the global audio level variable we used earlier for the big mushroom
     let lvl =
       typeof currentLevel !== "undefined"
         ? constrain(currentLevel, 0, 0.4)
         : 0;
 
-    // 用 seed 生成不同的相位，让每只蘑菇节奏不完全同步
+  // Use the seed to generate different phases so each mushroom's rhythm isn't perfectly synchronized
     let phase = (this.seed % 1000) * 0.01;
     let t = frameCount * 0.03 + phase;
 
-    // 呼吸：整体 scale 轻微变动
-    let breathe = 1 + lvl * 0.4; // 想动得更猛就调大 0.8
+  // Breathing: slight overall scale variation
+  let breathe = 1 + lvl * 0.4; // increase (e.g., to 0.8) to make motion stronger
 
-    // 左右轻微摇头（弧度）
-    let sway = sin(t) * lvl * 0.2; // 想更稳就调小 0.35
+  // Slight left-right sway (radians)
+  let sway = sin(t) * lvl * 0.2; // reduce (e.g., to 0.35) to make it more stable
 
-    // === 原来用的 s / r，这里加上音频动画 ===
+  // Previously used s / r; now add audio-driven animation
     const s = this.scale * breathe;
     const r = this.rot + sway;
 
-    // 锚点位置：在 y 上加一点上下浮动
-    const ax = this.anchor.x;
-    const ay = this.anchor.y + sin(t * 1.2) * lvl * 10; // 想少动就把 20 变小
+  // Anchor position: add some vertical wobble to y
+  const ax = this.anchor.x;
+  const ay = this.anchor.y + sin(t * 1.2) * lvl * 10; // reduce 10 to make it move less
 
     const offCap = this.layout.capOffset || { x: 0, y: 0 };
     const offStem = this.layout.stemOffset || { x: 0, y: 80 };
@@ -1456,7 +1456,7 @@ class Mushroom {
   }
 }
 
-// ---------- Scene class（目前可以不用，但保留） ----------
+// ---------- Scene class (not needed for now, kept for convenience) ----------
 class Scene {
   constructor() {
     this.items = [];
@@ -1570,7 +1570,7 @@ const TYPE_LIBRARY = {
   }
 };
 
-// 场景布局（你原来的 SCENE_LAYOUT）
+// Scene layout (your original SCENE_LAYOUT)
 const SCENE_LAYOUT = [
   {
     id: "m_greenL",
@@ -2067,7 +2067,7 @@ const SCENE_LAYOUT = [
   }
 ];
 
-// 工厂函数
+// Factory function
 function makeMushroomFromLayout(layout) {
   const typeSpec = TYPE_LIBRARY[layout.type];
   if (!typeSpec) {
@@ -2117,9 +2117,9 @@ function makeMushroomFromLayout(layout) {
   });
 }
 
-// ==================== 大蘑菇：伞盖 & 伞柄（你的原版） ====================
+// Big mushroom: cap & stem (your original)
 
-/* ================== 伞盖：更像原画的大蘑菇 ================== */
+/* Cap: big mushroom closer to original art */
 function drawCapReplica(cx, cy, W, H) {
   const rimThk = 54;
   const topW = W * 1.05,
@@ -2376,43 +2376,43 @@ function drawCapReplica(cx, cy, W, H) {
   ctx.restore();
 }
 
-// 根据 y 和原始 x，算出扭动之后的 x
+// Compute the warped x value from y and the original x
 function stemWarpX(y, originalX) {
-  // y 这里大概是从 -H 到 0（顶到底）
-  // 越靠上的地方越软，越靠下越稳
-  let norm = map(y, -680, 0, 0, 1);  // -680 是你大柄的高度 H
+  // y roughly ranges from -H to 0 (top to bottom)
+  // areas nearer the top are softer, nearer the bottom are firmer
+  let norm = map(y, -680, 0, 0, 1);  // -680 is your large stem height H
 
-  // 在 stemWavePhase 基础上叠加「沿着 stem 的波纹」
-  let wave = sin(stemWavePhase + norm * 6.0);  // 6 越大波纹越密
+  // add a along-stem ripple on top of stemWavePhase
+  let wave = sin(stemWavePhase + norm * 6.0);  // bigger 6 => denser ripples
 
-  // sway 是最后的左右偏移量
+  // sway is the final horizontal offset
   let sway = wave * stemWaveStrength * pow(norm, 0.25);
 
   return originalX + sway;
 }
 
 
-/* ====================== 伞柄 ====================== */
-// =========== 大蘑菇伞柄：白色 + S 型扭动 + 红点 + clip =========== //
+// Stem 
+// Big mushroom stem: white + S-shaped wobble + red dots + clip //
 function drawStemUniform() {
-  const H = 680;          // 柄高
-  const topW = 120;       // 顶部宽度
-  const botW = 230;       // 底部宽度
+  const H = 680;          // stem height
+  const topW = 120;       // top width
+  const botW = 230;       // bottom width
 
-  // 1. 先画白色伞柄本体（用 sample 点拼出轮廓）
+  // 1. Draw the white stem body first (use sampled points to form the outline)
   noStroke();
   fill("#FFF7F4");
 
   beginShape();
-  // 左边轮廓：从上(-H)到下(0)
+  // Left contour: from top (-H) to bottom (0)
   for (let ty = 0; ty <= 1.001; ty += 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
     let left = -half;
-    left = stemWarpX(y, left);  // 左边边缘也跟着 S 型扭动
+    left = stemWarpX(y, left);  // left edge follows S-shaped wobble
     vertex(left, y);
   }
-  // 右边轮廓：从下到上
+  // Right contour: from bottom to top
   for (let ty = 1; ty >= -0.001; ty -= 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
@@ -2422,13 +2422,13 @@ function drawStemUniform() {
   }
   endShape(CLOSE);
 
-  // 2. 用同一条轮廓做 clip（保证红点只出现在白柄里）
+  // 2. Use the same contour as a clip (ensure red dots only appear inside the white stem)
   const ctx = drawingContext;
   ctx.save();
   ctx.beginPath();
 
   let first = true;
-  // 左边轮廓（clip path）
+  // Left contour (clip path)
   for (let ty = 0; ty <= 1.001; ty += 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
@@ -2441,7 +2441,7 @@ function drawStemUniform() {
       ctx.lineTo(left, y);
     }
   }
-  // 右边轮廓（clip path）
+  // Right contour (clip path)
   for (let ty = 1; ty >= -0.001; ty -= 0.02) {
     let y = -H * ty;
     let half = lerp(topW * 0.5, botW * 0.5, ty);
@@ -2451,28 +2451,28 @@ function drawStemUniform() {
   }
 
   ctx.closePath();
-  ctx.clip();  
+  ctx.clip();
 
-  // 3. 在 clip 区域里画红点（大小 + 透明度 跟音量相关）
+  // 3. Draw red dots inside the clip area (size + alpha relate to audio level)
   const levelFactor = map(currentLevel, 0, 0.35, 0.8, 1.8);
 
   noStroke();
-  fill("#C4162B");   // 你原来伞柄上的那种红
+  fill("#C4162B");   // red color used on the stem
 
   const rows = 56;
   const sideCols = 8;
   const stepX = 22;
 
-  let colXs = [0]; // 中心列
+  let colXs = [0]; // center column
   for (let i = 1; i <= sideCols; i++) {
-    colXs.push(i * stepX, -i * stepX); // 左右两边对称
+    colXs.push(i * stepX, -i * stepX); // symmetric left and right
   }
 
   for (let c of colXs) {
     let isCenter = (c === 0);
     for (let j = 0; j < rows; j++) {
-      let y = map(j, 0, rows - 1, -H, 0); // 从顶到底
-      // 这里直接把整列 x 也做 S 型扭动
+      let y = map(j, 0, rows - 1, -H, 0); // from top to bottom
+      // Apply S-shaped warp to the entire column x as well
       let x = stemWarpX(y, c);
 
       let d = (isCenter ? 12 : 7) * levelFactor;
@@ -2480,12 +2480,12 @@ function drawStemUniform() {
     }
   }
 
-  ctx.restore();  
+  ctx.restore();
 }
 
 
 
-// ================== setup / draw ==================
+//setup / draw
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -2493,6 +2493,13 @@ function setup() {
   colorMode(HSB, 360, 100, 100, 100);
 
   buildBackground();
+
+// My Audio Change
+// Using p5.Amplitude to get volume level in real-time
+// Reference: https://p5js.org/reference/#/p5.Amplitude
+// (Learned and applied with ChatGPT guidance)
+
+amp = new p5.Amplitude();
 
   amp = new p5.Amplitude();
 
@@ -2502,7 +2509,7 @@ function setup() {
     if (m) mushrooms.push(m);
   }
 
-  // ===== 绑定左上角 HTML 按钮的点击事件 =====
+  // Bind the top-left HTML button click event
   playButton = document.getElementById("play-pause");
   if (playButton) {
     playButton.addEventListener("click", () => {
@@ -2518,7 +2525,13 @@ function setup() {
 
 
 function draw() {
-  // ===== 1. 更新音量 =====
+  // 1. Update audio level
+  // My Audio Code
+// Get current volume level (0–1) in real-time from p5.Amplitude
+// Reference: https://p5js.org/reference/#/p5.Amplitude/getLevel
+// ChatGPT helped me understand how volume values can drive visual changes
+currentLevel = amp.getLevel();
+
   if (amp) {
     currentLevel = amp.getLevel();
   } else {
@@ -2526,26 +2539,38 @@ function draw() {
   }
   let lvl = constrain(currentLevel, 0, 0.4);
 
-// 伞柄 S 型扭动相位 & 强度（整体越响 → 扭得越明显）
+// === My Audio Code: Bass-driven stem wobble ===
+// ChatGPT helped me understand how bass frequencies can drive sideways bending visually
+
+// Use sine wave phase to create continuous wobble motion
+// Make stems wiggle stronger when bass hits (low-frequency energy)
+// Reference: https://p5js.org/reference/#/p5.FFT/getEnergy
+// lerp() reference: https://p5js.org/reference/#/p5/lerp
 stemWavePhase += stemWaveSpeed;
 stemWaveStrength = lerp(stemWaveStrength, lvl * 35, 0.15);
 
-  // ===== 2. 背景：用屏幕坐标，铺满整个窗口 =====
+  // 2. Background: use screen coordinates to fill the window
+  // My Audio Visual Mapping
+  // Convert volume level to a 0–1 brightness factor
+  // p5.map() reference: https://p5js.org/reference/#/p5/map
+  // ChatGPT assisted in designing how audio intensity controls background brightness
+
   push();
   let t = map(lvl, 0, 0.4, 0, 1, true);
 
-  // 亮度随音乐变化（你可以继续调）
+  // Brightness changes with the music (you can tweak this)
   let bgHue = 30;
   let bgSat = 40;
   let bgBri = 40 + 45 * t;
-
+  // Using tint() from p5.js to adjust real-time brightness based on sound
+  // Reference: https://p5js.org/reference/#/p5/tint
   tint(bgHue, bgSat, bgBri, 100);
-  image(bg, 0, 0, width, height);   // 👈 这里在“外面”画背景
+  image(bg, 0, 0, width, height);   //  draw the background 'outside' here
   noTint();
   colorMode(RGB);
   pop();
 
-  // ===== 3. 计算蘑菇场景的缩放（保持 1200x1000 比例） =====
+  // 3. Compute scene scaling (maintain 1200x1000 aspect)
   let sceneW = maxWidth;   // 1200
   let sceneH = maxHeight;  // 1000
 
@@ -2553,12 +2578,12 @@ stemWaveStrength = lerp(stemWaveStrength, lvl * 35, 0.15);
   let offsetX = (width  - sceneW * scaleFactor) / 2;
   let offsetY = (height - sceneH * scaleFactor) / 2;
 
-  // ===== 4. 在缩放后的场景里画大蘑菇 + 小蘑菇 =====
+  // 4. Draw big and small mushrooms in the scaled scene
   push();
   translate(offsetX, offsetY);
   scale(scaleFactor);
 
-  // --- 大蘑菇 ---
+  // --- Big mushroom ---
   push();
   translate(sceneW * 0.35, sceneH * 0.75);
 
@@ -2569,14 +2594,14 @@ stemWaveStrength = lerp(stemWaveStrength, lvl * 35, 0.15);
   let globalScale = 0.7 * (1+lvl * 0.2);
   scale(globalScale);
 
-  // 柄体拉伸
+  // Stem stretch
   push();
   let stemStretch = 1 + lvl * 0.6;
   scale(1, stemStretch);
   drawStemUniform();
   pop();
 
-  // 伞盖弹跳 + 呼吸
+  // Cap bounce + breathing
   let capScale = 1 + lvl * 0.3;
   let capBounce = -650 - lvl * 20;
   drawCapReplica(0, capBounce, 880 * capScale, 360 * capScale);
