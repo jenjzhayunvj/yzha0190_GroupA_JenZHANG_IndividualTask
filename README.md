@@ -6,53 +6,80 @@
 # 1.Interaction Instructions
 
 Click the “🎵” button to start the audio track.
+
 ![An image of button](assets/button.png)
+
 Once the audio begins, the entire composition becomes reactive:
 - The mushroom scales up and down according to amplitude.
 - The stem deforms in an S-shaped motion based on bass energy.
 - The red dots on the stem change size and opacity depending on amplitude.
-- The background triangle network changes colour according to treble energy.
-The prototype requires no mouse interaction; the animation responds purely to sound.
+- The background changes colour according to treble energy.
 
-# 1.Overview
-This repository contains my individual interactive prototype based on our group’s chosen artwork: Toadstools by Yayoi KUSAMA.
-![An image of toadstools](https://artlogic-res.cloudinary.com/w_1000,c_limit,f_auto,fl_lossy,q_auto/ws-artlogicwebsite1680/usr/images/feature_panels/image/items/71/7156e99e34ff482383a5d142d611d7c7/toadstools-1990.png)
-My individual part focuses on transforming the static drawing into an audio-reactive, dynamically deforming system using p5.js and the p5.sound library. 
 
-All animated behaviours are driven by different components of the audio signal (amplitude, bass energy, treble energy).The result is a clear and responsive visual animation that reacts smoothly to the music.
+# 2.Individual Approach Detail
+## 2.1 I chose audio to drive my individual code.
+This repository contains my individual functional prototype based on our group’s artwork result.
+![An image of result](assets/mushrooms.png)
+## 2.2 Unique Animated Visual Properties
+In my individual version, the animation focuses on global audio responsiveness rather than user interaction. I animate three key properties of the visual composition:
 
-# 3.Individual Animation Approach
+- Global Scale Variation (Amplitude-Driven Breathing Effect)
+Both the mushroom cap and stem scale together based on sound amplitude. This creates a smooth breathing motion, as if the mushrooms inhale and exhale with the rhythm of the music.
 
-My chosen driver for this task is audio analysis using the p5.sound library.
-I used three major audio features:
+- Stem Deformation (Bass-Driven S-Curve Wobble)
+The stem’s horizontal curvature is modulated by a sine-wave function whose strength corresponds to bass energy. Strong bass results in more dramatic wobbling, making the mushrooms visually “dance.”
 
-Audio Feature	p5.js Function	Usage in Animation
-Amplitude (loudness)	p5.Amplitude.getLevel()	Breathing scale; dot size; dot opacity
-Bass energy	p5.FFT.getEnergy("bass")	S-shaped deformation of the stem; camera shake
-Treble energy	p5.FFT.getEnergy("treble")	Background triangle colour interpolation
+- Dynamic Background Brightness (Treble-Responsive Atmosphere)
+The triangular background brightness is mapped to treble energy. Higher frequencies increase overall lightness, enhancing immersion and giving the scene a more vibrant and reactive mood.
 
-Additionally, I used Perlin noise to generate natural irregularity for cap dots, and parametric sinusoidal functions to create continuous, elastic organic motion.
-This ensures that each part of the mushroom responds to the audio in a distinct but coherent manner.
+## 2.3 Design Inspiration
 
-# 4.How My Work Differs From Group Members
+### 2.3.1 Organic structures
+Yayoi Kusama's mushrooms are characterized by their soft, slightly exaggerated shapes and repetitive dots. Therefore, in the animation, I gave the caps a slightly natural distortion and the dots a subtle, random tremor to create a sense of organic life.
 
-My section mainly focuses on making the mushroom react to the audio. The stem and cap change shape based on the music — for example, the S-shaped wobble, the breathing effect, and the frequency-based colour changes in the background. The dots on the mushroom also grow and shrink with the sound, so the whole thing feels alive and tied closely to the audio.
+At the same time, I wanted the mushrooms to be lively and rhythmic, like a musical performance group, similar to some fun mushroom animations online. 
 
-In our group, other members are working on completely different features, like input interactions or more static visuals. So my part is mainly about audio responsiveness, while theirs focuses on user actions or other functions.
+[Eat Your Vegetables Rap Song Vocal Music](https://www.youtube.com/watch?v=ep5-w-UFIHI). This reference comes from some fun mushroom animations online where vegetables dance or play instruments.
 
-# 5.Design Inspiration
-
-## 1. Organic structures
-I want to create an animation that feels like a mushroom saxophone band.[Eat Your Vegetables Rap Song Vocal Music](https://www.youtube.com/watch?v=ep5-w-UFIHI).
-
-Mushrooms have soft, stretchy, and slightly irregular shapes. Because of this, I let the stem deform with smooth S-curves, added a breathing-like scaling effect, and let the cap dots jitter using noise to show natural imperfections.
-
-## 2. The audio track 
+### 2.3.2 The audio track 
 I used the song Pueblo Mágico by Quincas Moreira for my audio input.
 [Pueblo Magic by Quincas Moreira](https://www.youtube.com/watch?v=RWRI6xUi7A0) has a gentle rhythm and clear layers, which makes the mushroom’s movements feel more organic. The bass drives the stem’s wobble, the mid-range affects the breathing motion, and the higher frequencies make the background colours shift.
 
-# 6. Technical Explanation
-## 6.1 Amplitude-driven global scaling
+## 2.4 Technical explanation
+I did not make major structural changes to the group code. The existing geometry system, dot patterns, and Voronoi stem textures remain intact. My changes mainly extend the behaviour inside the update and drawing functions so each mushroom receives the audio values and animates in response.
+
+Amplitude controls the global scale of each mushroom, so they appear to expand and contract like breathing.
+
+Bass energy extracted from the FFT drives the wobble of the stems, creating an S-shaped dancing movement that reacts to strong beats.
+
+Treble energy influences the brightness of the background, causing subtle glowing changes when higher frequencies become more prominent.
+
+This transforms the static group illustration into a performance-like scene that reacts continuously to music.
+
+The p5.sound audio analysis features (Amplitude and FFT) are part of the p5.js library, but using them for this level of visual animation required learning beyond the basic usage taught in class. I referred to the official documentation to understand how to extract bass and treble values for controlling different visual components.
+
+Our group code also uses a Voronoi pattern system which relies on two external libraries not covered in the course content. I did not modify or implement these algorithms myself; I simply continued using them as part of the existing design.
+
+Voronoi libraries used:
+
+Javascript-Voronoi by Raymond Hill — https://github.com/gorhill/Javascript-Voronoi
+
+p5.voronoi by Francisco Moreira — https://github.com/Dozed12/p5.voronoi
+Support and AI-assisted learning
+
+
+I also used ChatGPT as a learning and debugging tool during development. It helped me understand how to apply amplitude and FFT values from the p5.sound library to visual animation. I did not copy large portions of code directly. Instead, I asked questions, reviewed the suggestions, and then integrated and modified the logic myself to fit our group structure.
+
+This support mainly helped me with:
+
+Passing audio data into each mushroom instance
+
+Mapping different frequency ranges to different animation properties
+
+Fixing small errors when combining sound analysis with our existing update functions
+
+By using AI in this way, I was able to learn faster and maintain full understanding and control over the final code.
+
 Reference:
 
 [p5.Amplitude/getLevel](https://p5js.org/reference/p5.AudioIn/getLevel/)
@@ -118,29 +145,8 @@ endShape(CLOSE);
 
 This allows precise control of mushroom curvature, sagging geometry, and clipped shading regions.
 
-# 7. Changes Made to Group Code
-My individual implementation required substantial extensions and modifications:
-
-Reorganised drawing order to ensure background draws before the mushroom.
-
-Encapsulated mushroom transformation using push() / pop().
-
-Added amplitude-driven global scale transformation.
-
-Replaced original stem with a fully parametric, audio-reactive S-shaped version.
-
-Introduced noise-based variation for cap dots.
-
-Added background shake based on bass energy.
-
-Added colour interpolation to background triangles based on treble energy.
-
-Centralised audio analysis logic (FFT + amplitude) at the start of draw().
-
-These changes were necessary to achieve the desired audio-reactive behaviour and clearly differentiate my individual work from the group version.
-
-# 8. References
-- p5.js Sound Library
+# 3. References
+## 3.1 p5.js Sound Library
 
   - p5.js. “p5.Amplitude.” p5.js Reference. [p5.Amplitude](https://p5js.org/reference/p5.sound/p5.Amplitude/)
 
@@ -150,7 +156,7 @@ These changes were necessary to achieve the desired audio-reactive behaviour and
 
   - p5.js. “userStartAudio().” [https://p5js.org/reference/#/p5/userStartAudio](https://p5js.org/reference/p5/userStartAudio/)
 
-- p5.js Core
+## 3.2 p5.js Core
 
     -  p5.js. “noise().”p5.js Reference. [p5.js. “noise().”](https://p5js.org/reference/p5/noise/)
 
@@ -166,7 +172,7 @@ These changes were necessary to achieve the desired audio-reactive behaviour and
       
     -  p5.js. “sin().”p5.js Reference.[p5.js. “sin().”](https://p5js.org/reference/p5/sin/)
 
-## External Technical References
+## 3.3 External Technical References
 
 - [MDN Web Docs. “CanvasRenderingContext2D.clip.”](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip)
 
